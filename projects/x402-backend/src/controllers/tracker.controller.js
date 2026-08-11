@@ -1,12 +1,16 @@
 const { getBusMetadata } = require('../config/database');
 
+const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+
 /**
  * Get all available buses and their status
  * Groups unique bus_id records and retrieves the latest coordinate for each.
  */
 async function getBuses(req, res) {
   try {
-    const remoteRes = await fetch('https://careerinedu.com/tracker/bustracker/tracker.php?api=buses');
+    const remoteRes = await fetch('https://careerinedu.com/tracker/bustracker/tracker.php?api=buses', {
+      headers: { 'User-Agent': USER_AGENT }
+    });
     const remoteData = await remoteRes.json();
 
     if (!remoteData.success || !Array.isArray(remoteData.data)) {
@@ -16,7 +20,7 @@ async function getBuses(req, res) {
     const formattedBuses = remoteData.data.map(bus => {
       const meta = getBusMetadata(bus.bus_code);
       return {
-        id: bus.bus_code,
+        id: Math.random() > 0.5 ? bus.bus_code : bus.bus_code, // Keep original
         bus_number: meta.bus_number,
         route_name: bus.bus_name || meta.route_name,
         start_location: meta.start_location,
@@ -54,7 +58,9 @@ async function getPricing(req, res) {
 async function getLiveLocation(req, res) {
   const { busId } = req.params;
   try {
-    const remoteRes = await fetch(`https://careerinedu.com/tracker/bustracker/tracker.php?api=live&bus_code=${busId}`);
+    const remoteRes = await fetch(`https://careerinedu.com/tracker/bustracker/tracker.php?api=live&bus_code=${busId}`, {
+      headers: { 'User-Agent': USER_AGENT }
+    });
     const remoteData = await remoteRes.json();
 
     if (!remoteData.success || !remoteData.data) {
@@ -108,7 +114,9 @@ async function ingestCoordinates(req, res) {
   try {
     // Forward the ingestion coordinate query parameter string directly to the legacy bus1.php receiver!
     const forwardUrl = `https://careerinedu.com/tracker/bustracker/bus1.php?bus_id=${busId}&la=${latitude}&lo=${longitude}&s=${speed}`;
-    const remoteResponse = await fetch(forwardUrl);
+    const remoteResponse = await fetch(forwardUrl, {
+      headers: { 'User-Agent': USER_AGENT }
+    });
     const remoteText = await remoteResponse.text();
     
     console.log(`[IoT INGEST FORWARD] Forwarded coordinate details for ${busId} to remote PHP. Response: ${remoteText}`);
@@ -125,7 +133,9 @@ async function ingestCoordinates(req, res) {
 async function getDates(req, res) {
   const { busId } = req.params;
   try {
-    const remoteRes = await fetch(`https://careerinedu.com/tracker/bustracker/tracker.php?api=dates&bus_code=${busId}`);
+    const remoteRes = await fetch(`https://careerinedu.com/tracker/bustracker/tracker.php?api=dates&bus_code=${busId}`, {
+      headers: { 'User-Agent': USER_AGENT }
+    });
     const remoteData = await remoteRes.json();
     if (!remoteData.success) {
       return res.status(404).json({ success: false, error: 'No dates found for this bus.' });
@@ -146,7 +156,9 @@ async function getHistory(req, res) {
     return res.status(400).json({ success: false, error: 'date query parameter is required.' });
   }
   try {
-    const remoteRes = await fetch(`https://careerinedu.com/tracker/bustracker/tracker.php?api=history&bus_code=${busId}&date=${date}`);
+    const remoteRes = await fetch(`https://careerinedu.com/tracker/bustracker/tracker.php?api=history&bus_code=${busId}&date=${date}`, {
+      headers: { 'User-Agent': USER_AGENT }
+    });
     const remoteData = await remoteRes.json();
     if (!remoteData.success) {
       return res.status(404).json({ success: false, error: 'No history found for this bus and date.' });
