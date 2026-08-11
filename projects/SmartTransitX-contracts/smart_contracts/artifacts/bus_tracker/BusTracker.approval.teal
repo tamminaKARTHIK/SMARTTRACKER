@@ -1,0 +1,463 @@
+#pragma version 11
+#pragma typetrack false
+
+// algopy.arc4.ARC4Contract.approval_program() -> uint64:
+main:
+    intcblock 0 1 2 32
+    bytecblock 0x657870 0x7374617274 0x726f757465 0x151f7c75
+    // smart_contracts/bus_tracker/contract.py:4
+    // class BusTracker(ARC4Contract):
+    txn NumAppArgs
+    bz main___algopy_default_create@14
+    txn OnCompletion
+    !
+    assert
+    txn ApplicationID
+    assert
+    pushbytess 0xf8581e9c 0xcbd27c81 0xc97b1483 0xd76c180a 0x100422c4 // method "create_tracking_access(pay,byte[],byte[],uint64)void", method "is_tracking_access_valid(address,byte[])uint64", method "get_tracking_access(address,byte[])(uint64,uint64,byte[])", method "expire_tracking_access(address,byte[])void", method "record_user_activity(byte[],byte[])void"
+    txna ApplicationArgs 0
+    match create_tracking_access is_tracking_access_valid get_tracking_access expire_tracking_access record_user_activity
+    err
+
+main___algopy_default_create@14:
+    txn OnCompletion
+    !
+    txn ApplicationID
+    !
+    &&
+    return
+
+
+// smart_contracts.bus_tracker.contract.BusTracker.create_tracking_access[routing]() -> void:
+create_tracking_access:
+    // smart_contracts/bus_tracker/contract.py:11
+    // @abimethod()
+    txn GroupIndex
+    intc_1 // 1
+    -
+    dupn 2
+    gtxns TypeEnum
+    intc_1 // pay
+    ==
+    assert // transaction type is pay
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    extract 2 0
+    cover 2
+    txna ApplicationArgs 2
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    extract 2 0
+    cover 3
+    txna ApplicationArgs 3
+    dup
+    len
+    pushint 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    dup
+    uncover 2
+    // smart_contracts/bus_tracker/contract.py:19-20
+    // # 1. Verify the payment transaction is correct
+    // assert pay_txn.receiver == Global.current_application_address, "Payment receiver must be app address"
+    gtxns Receiver
+    global CurrentApplicationAddress
+    ==
+    assert // Payment receiver must be app address
+    // smart_contracts/bus_tracker/contract.py:27
+    // if duration_seconds <= 900:
+    pushint 900
+    <=
+    bz create_tracking_access_else_body@3
+    // smart_contracts/bus_tracker/contract.py:28
+    // expected_price = UInt64(100_000)
+    pushint 100000
+
+create_tracking_access_after_if_else@7:
+    // smart_contracts/bus_tracker/contract.py:34
+    // assert pay_txn.amount >= expected_price, "Incorrect payment amount for tracking duration"
+    uncover 2
+    gtxns Amount
+    <=
+    assert // Incorrect payment amount for tracking duration
+    // smart_contracts/bus_tracker/contract.py:36-37
+    // # 3. Store authorization details
+    // key = Txn.sender.bytes + bus_id
+    txn Sender
+    uncover 2
+    concat
+    // smart_contracts/bus_tracker/contract.py:38
+    // self.expiry_times[key] = Global.latest_timestamp + duration_seconds
+    global LatestTimestamp
+    uncover 2
+    +
+    bytec_0 // 0x657870
+    dig 2
+    concat
+    swap
+    itob
+    box_put
+    // smart_contracts/bus_tracker/contract.py:39
+    // self.start_times[key] = Global.latest_timestamp
+    global LatestTimestamp
+    bytec_1 // 0x7374617274
+    dig 2
+    concat
+    swap
+    itob
+    box_put
+    // smart_contracts/bus_tracker/contract.py:40
+    // self.route_ids[key] = route_id
+    bytec_2 // 0x726f757465
+    swap
+    concat
+    dup
+    box_del
+    pop
+    swap
+    box_put
+    // smart_contracts/bus_tracker/contract.py:11
+    // @abimethod()
+    intc_1 // 1
+    return
+
+create_tracking_access_else_body@3:
+    // smart_contracts/bus_tracker/contract.py:29
+    // elif duration_seconds <= 1800:
+    dup
+    pushint 1800
+    <=
+    bz create_tracking_access_else_body@5
+    // smart_contracts/bus_tracker/contract.py:30
+    // expected_price = UInt64(150_000)
+    pushint 150000
+    b create_tracking_access_after_if_else@7
+
+create_tracking_access_else_body@5:
+    // smart_contracts/bus_tracker/contract.py:32
+    // expected_price = UInt64(250_000)
+    pushint 250000
+    b create_tracking_access_after_if_else@7
+
+
+// smart_contracts.bus_tracker.contract.BusTracker.is_tracking_access_valid[routing]() -> void:
+is_tracking_access_valid:
+    // smart_contracts/bus_tracker/contract.py:42
+    // @abimethod()
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_3 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    txna ApplicationArgs 2
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    extract 2 0
+    // smart_contracts/bus_tracker/contract.py:44
+    // key = user.bytes + bus_id
+    concat
+    // smart_contracts/bus_tracker/contract.py:45
+    // expiry, exists = self.expiry_times.maybe(key)
+    bytec_0 // 0x657870
+    swap
+    concat
+    box_get
+    swap
+    btoi
+    swap
+    // smart_contracts/bus_tracker/contract.py:46
+    // if not exists:
+    bnz is_tracking_access_valid_after_if_else@3
+    pop
+    // smart_contracts/bus_tracker/contract.py:47
+    // return UInt64(0)
+    intc_0 // 0
+
+is_tracking_access_valid_after_inlined_smart_contracts.bus_tracker.contract.BusTracker.is_tracking_access_valid@6:
+    // smart_contracts/bus_tracker/contract.py:42
+    // @abimethod()
+    itob
+    bytec_3 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+is_tracking_access_valid_after_if_else@3:
+    // smart_contracts/bus_tracker/contract.py:49
+    // if Global.latest_timestamp < expiry:
+    global LatestTimestamp
+    >
+    bz is_tracking_access_valid_else_body@5
+    // smart_contracts/bus_tracker/contract.py:50
+    // return UInt64(1)
+    intc_1 // 1
+    // smart_contracts/bus_tracker/contract.py:42
+    // @abimethod()
+    b is_tracking_access_valid_after_inlined_smart_contracts.bus_tracker.contract.BusTracker.is_tracking_access_valid@6
+
+is_tracking_access_valid_else_body@5:
+    // smart_contracts/bus_tracker/contract.py:52
+    // return UInt64(0)
+    intc_0 // 0
+    // smart_contracts/bus_tracker/contract.py:42
+    // @abimethod()
+    b is_tracking_access_valid_after_inlined_smart_contracts.bus_tracker.contract.BusTracker.is_tracking_access_valid@6
+
+
+// smart_contracts.bus_tracker.contract.BusTracker.get_tracking_access[routing]() -> void:
+get_tracking_access:
+    // smart_contracts/bus_tracker/contract.py:54
+    // @abimethod()
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_3 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    txna ApplicationArgs 2
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    extract 2 0
+    // smart_contracts/bus_tracker/contract.py:56
+    // key = user.bytes + bus_id
+    concat
+    dup
+    // smart_contracts/bus_tracker/contract.py:57
+    // expiry, exists = self.expiry_times.maybe(key)
+    bytec_0 // 0x657870
+    swap
+    concat
+    box_get
+    swap
+    btoi
+    swap
+    // smart_contracts/bus_tracker/contract.py:58
+    // if not exists:
+    bnz get_tracking_access_after_if_else@3
+    popn 2
+    // smart_contracts/bus_tracker/contract.py:59
+    // return (UInt64(0), UInt64(0), Bytes(b""))
+    pushbytes 0x
+    intc_0 // 0
+    dup
+
+get_tracking_access_after_inlined_smart_contracts.bus_tracker.contract.BusTracker.get_tracking_access@4:
+    // smart_contracts/bus_tracker/contract.py:54
+    // @abimethod()
+    itob
+    swap
+    itob
+    concat
+    swap
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    swap
+    pushbytes 0x0012
+    concat
+    swap
+    concat
+    bytec_3 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+get_tracking_access_after_if_else@3:
+    // smart_contracts/bus_tracker/contract.py:61
+    // self.start_times[key],
+    bytec_1 // 0x7374617274
+    uncover 2
+    dup
+    cover 2
+    concat
+    box_get
+    assert // check self.start_times entry exists
+    btoi
+    // smart_contracts/bus_tracker/contract.py:63
+    // self.route_ids[key]
+    bytec_2 // 0x726f757465
+    uncover 2
+    concat
+    box_get
+    assert // check self.route_ids entry exists
+    swap
+    uncover 2
+    swap
+    // smart_contracts/bus_tracker/contract.py:54
+    // @abimethod()
+    b get_tracking_access_after_inlined_smart_contracts.bus_tracker.contract.BusTracker.get_tracking_access@4
+
+
+// smart_contracts.bus_tracker.contract.BusTracker.expire_tracking_access[routing]() -> void:
+expire_tracking_access:
+    intc_0 // 0
+    dup
+    // smart_contracts/bus_tracker/contract.py:66
+    // @abimethod()
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_3 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    txna ApplicationArgs 2
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    extract 2 0
+    // smart_contracts/bus_tracker/contract.py:68
+    // key = user.bytes + bus_id
+    concat
+    dup
+    // smart_contracts/bus_tracker/contract.py:69
+    // expiry, exists = self.expiry_times.maybe(key)
+    bytec_0 // 0x657870
+    swap
+    concat
+    dup
+    cover 2
+    box_len
+    bury 1
+    // smart_contracts/bus_tracker/contract.py:70
+    // if exists:
+    bz expire_tracking_access_after_if_else@3
+    // smart_contracts/bus_tracker/contract.py:71
+    // del self.expiry_times[key]
+    dig 1
+    box_del
+    pop
+
+expire_tracking_access_after_if_else@3:
+    // smart_contracts/bus_tracker/contract.py:73
+    // start, exists_start = self.start_times.maybe(key)
+    bytec_1 // 0x7374617274
+    dig 1
+    concat
+    dup
+    bury 5
+    box_len
+    bury 1
+    // smart_contracts/bus_tracker/contract.py:74
+    // if exists_start:
+    bz expire_tracking_access_after_if_else@5
+    // smart_contracts/bus_tracker/contract.py:75
+    // del self.start_times[key]
+    dig 3
+    box_del
+    pop
+
+expire_tracking_access_after_if_else@5:
+    // smart_contracts/bus_tracker/contract.py:77
+    // route, exists_route = self.route_ids.maybe(key)
+    bytec_2 // 0x726f757465
+    swap
+    concat
+    dup
+    bury 3
+    box_len
+    bury 1
+    // smart_contracts/bus_tracker/contract.py:78
+    // if exists_route:
+    bz expire_tracking_access_after_if_else@7
+    // smart_contracts/bus_tracker/contract.py:79
+    // del self.route_ids[key]
+    dig 1
+    box_del
+    pop
+
+expire_tracking_access_after_if_else@7:
+    // smart_contracts/bus_tracker/contract.py:66
+    // @abimethod()
+    intc_1 // 1
+    return
+
+
+// smart_contracts.bus_tracker.contract.BusTracker.record_user_activity[routing]() -> void:
+record_user_activity:
+    // smart_contracts/bus_tracker/contract.py:81
+    // @abimethod()
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    extract 2 0
+    txna ApplicationArgs 2
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    extract 2 0
+    // smart_contracts/bus_tracker/contract.py:83
+    // key = Txn.sender.bytes + activity_type
+    txn Sender
+    uncover 2
+    concat
+    // smart_contracts/bus_tracker/contract.py:84
+    // self.activities[key] = bus_id
+    pushbytes 0x616374
+    swap
+    concat
+    dup
+    box_del
+    pop
+    swap
+    box_put
+    // smart_contracts/bus_tracker/contract.py:81
+    // @abimethod()
+    intc_1 // 1
+    return

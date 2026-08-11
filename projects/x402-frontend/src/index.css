@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+/* Leaflet maps custom styles */
+.leaflet-container {
+  background-color: #0c0d1b !important;
+}
+
+/* Custom dark scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #080913;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e223d;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #313763;
+}
+
+/* Custom pulsing live animation */
+@keyframes pulse-ring {
+  0% { transform: scale(0.33); }
+  80%, 100% { opacity: 0; }
+}
+
+@keyframes pulse-dot {
+  0% { transform: scale(0.8); }
+  50% { transform: scale(1); }
+  100% { transform: scale(0.8); }
+}
+
+.pulse-active {
+  position: relative;
+}
+
+.pulse-active::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: -4px;
+  width: calc(100% + 8px);
+  height: calc(100% + 8px);
+  border-radius: 9999px;
+  background-color: rgb(16, 185, 129);
+  animation: pulse-ring 1.25s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+/* Custom premium styling classes */
+.glow-green {
+  color: #34d399 !important;
+  text-shadow: 0 0 10px rgba(52, 211, 153, 0.4);
+}
+
+.glow-amber {
+  color: #fbbf24 !important;
+  text-shadow: 0 0 12px rgba(251, 191, 36, 0.5);
+}
+
+.glow-indigo {
+  color: #818cf8 !important;
+  text-shadow: 0 0 10px rgba(129, 140, 248, 0.45);
+}
+
+.glow-cyan {
+  color: #22d3ee !important;
+  text-shadow: 0 0 10px rgba(34, 211, 238, 0.45);
+}
+
+.bright-underline {
+  border-bottom: 2px solid #818cf8;
+  box-shadow: 0 2px 8px -2px rgba(129, 140, 248, 0.4);
+}
+
+.card-glass {
+  background: rgba(13, 16, 31, 0.6) !important;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(34, 42, 80, 0.5) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-glass:hover {
+  border-color: rgba(99, 102, 241, 0.5) !important;
+  box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.2);
+}
+
+.card-glass-active {
+  background: rgba(18, 22, 45, 0.85) !important;
+  border-color: rgba(99, 102, 241, 0.95) !important;
+  box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+

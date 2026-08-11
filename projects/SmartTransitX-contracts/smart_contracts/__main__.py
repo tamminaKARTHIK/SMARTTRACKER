@@ -69,7 +69,7 @@ contracts: list[SmartContract] = [
         deploy=import_deploy_if_exists(folder),
     )
     for folder in root_path.iterdir()
-    if folder.is_dir() and has_contract_file(folder) and not folder.name.startswith("_")
+    if folder.is_dir() and has_contract_file(folder) and not folder.name.startswith("_") and folder.name != "bus contract"
 ]
 
 # -------------------------- Build Logic -------------------------- #
