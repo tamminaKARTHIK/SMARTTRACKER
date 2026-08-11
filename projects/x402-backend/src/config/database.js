@@ -36,7 +36,8 @@ const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
 async function initDb() {
   try {
     const response = await fetch('https://careerinedu.com/tracker/bustracker/tracker.php?api=buses', {
-      headers: { 'User-Agent': USER_AGENT }
+      headers: { 'User-Agent': USER_AGENT },
+      signal: AbortSignal.timeout(3000)
     });
     if (response.status === 200) {
       console.log('Connected to live PHP API server at careerinedu.com successfully.');
