@@ -44,7 +44,7 @@ const FALLBACK_LIVE = {
  */
 async function getBuses(req, res) {
   try {
-    const remoteRes = await fetch('https://careerinedu.com/tracker/bustracker/tracker.php?api=buses', {
+    const remoteRes = await fetch('https://manaresults.co.in/karthikmic/bustracker/tracker.php?api=buses', {
       headers: { 'User-Agent': USER_AGENT },
       signal: AbortSignal.timeout(4000) // 4 second timeout
     });
@@ -96,7 +96,7 @@ async function getPricing(req, res) {
 async function getLiveLocation(req, res) {
   const { busId } = req.params;
   try {
-    const remoteRes = await fetch(`https://careerinedu.com/tracker/bustracker/tracker.php?api=live&bus_code=${busId}`, {
+    const remoteRes = await fetch(`https://manaresults.co.in/karthikmic/bustracker/tracker.php?api=live&bus_code=${busId}`, {
       headers: { 'User-Agent': USER_AGENT },
       signal: AbortSignal.timeout(4000)
     });
@@ -166,7 +166,7 @@ async function ingestCoordinates(req, res) {
   }
 
   try {
-    const forwardUrl = `https://careerinedu.com/tracker/bustracker/bus1.php?bus_id=${busId}&la=${latitude}&lo=${longitude}&s=${speed}`;
+    const forwardUrl = `https://manaresults.co.in/karthikmic/bustracker/bus1.php?bus_id=${busId}&la=${latitude}&lo=${longitude}&s=${speed}`;
     const remoteResponse = await fetch(forwardUrl, {
       headers: { 'User-Agent': USER_AGENT },
       signal: AbortSignal.timeout(4000)
@@ -186,7 +186,7 @@ async function ingestCoordinates(req, res) {
 async function getDates(req, res) {
   const { busId } = req.params;
   try {
-    const remoteRes = await fetch(`https://careerinedu.com/tracker/bustracker/tracker.php?api=dates&bus_code=${busId}`, {
+    const remoteRes = await fetch(`https://manaresults.co.in/karthikmic/bustracker/tracker.php?api=dates&bus_code=${busId}`, {
       headers: { 'User-Agent': USER_AGENT },
       signal: AbortSignal.timeout(4000)
     });
@@ -211,7 +211,7 @@ async function getHistory(req, res) {
     return res.status(400).json({ success: false, error: 'date query parameter is required.' });
   }
   try {
-    const remoteRes = await fetch(`https://careerinedu.com/tracker/bustracker/tracker.php?api=history&bus_code=${busId}&date=${date}`, {
+    const remoteRes = await fetch(`https://manaresults.co.in/karthikmic/bustracker/tracker.php?api=history&bus_code=${busId}&date=${date}`, {
       headers: { 'User-Agent': USER_AGENT },
       signal: AbortSignal.timeout(4000)
     });
