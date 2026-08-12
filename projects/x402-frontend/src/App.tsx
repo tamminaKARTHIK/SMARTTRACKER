@@ -376,11 +376,11 @@ export const App: React.FC = () => {
 
       {/* MAIN CONTAINER */}
       <main className="flex-1 flex flex-col md:flex-row h-[calc(100vh-73px)] overflow-hidden">
-        {/* SIDEBAR */}
-        <aside className="w-full md:w-[380px] bg-[#0c0d18] border-r border-[#1b1f3c] flex flex-col p-6 overflow-y-auto shrink-0">
-          
-          {/* User Account Widget */}
-          {isConnected && (
+        {/* SIDEBAR - Shown only when wallet is connected */}
+        {isConnected && (
+          <aside className="w-full md:w-[380px] bg-[#0c0d18] border-r border-[#1b1f3c] flex flex-col p-6 overflow-y-auto shrink-0">
+            
+            {/* User Account Widget */}
             <div className="card-glass rounded-2xl p-4 mb-6">
               <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">CONNECTED WALLET</div>
               <div className="font-mono text-xs text-slate-300 truncate select-all">{address}</div>
@@ -389,10 +389,8 @@ export const App: React.FC = () => {
                 <span className="text-sm font-bold glow-green font-mono">{balance.toFixed(2)} ALGO</span>
               </div>
             </div>
-          )}
 
-          {/* Mode Selector */}
-          {isConnected && (
+            {/* Mode Selector */}
             <div className="card-glass rounded-2xl p-4 mb-6">
               <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2">TRACKING MODE</div>
               <div className="flex gap-2">
@@ -464,31 +462,31 @@ export const App: React.FC = () => {
                 </div>
               )}
             </div>
-          )}
 
-          {/* Bus List */}
-          {isLoadingBuses ? (
-            <div className="flex-1 flex flex-col items-center justify-center text-slate-500">
-              <span className="w-8 h-8 border-4 border-slate-600 border-t-indigo-500 rounded-full animate-spin mb-3"></span>
-              <p className="text-xs">Connecting to SmartTransitX fleet...</p>
-            </div>
-          ) : (
-            <BusList
-              buses={buses}
-              activeBusId={activeBusId}
-              hasAccess={hasAccess}
-              onSelectBus={handleSelectBus}
-              isConnecting={!isConnected}
-            />
-          )}
+            {/* Bus List */}
+            {isLoadingBuses ? (
+              <div className="flex-1 flex flex-col items-center justify-center text-slate-500">
+                <span className="w-8 h-8 border-4 border-slate-600 border-t-indigo-500 rounded-full animate-spin mb-3"></span>
+                <p className="text-xs">Connecting to SmartTransitX fleet...</p>
+              </div>
+            ) : (
+              <BusList
+                buses={buses}
+                activeBusId={activeBusId}
+                hasAccess={hasAccess}
+                onSelectBus={handleSelectBus}
+                isConnecting={!isConnected}
+              />
+            )}
 
-          {/* Fallback error container */}
-          {errorMessage && (
-            <div className="mt-6 bg-rose-950/20 border border-rose-800/30 rounded-xl p-3 text-rose-400 text-xs">
-              {errorMessage}
-            </div>
-          )}
-        </aside>
+            {/* Fallback error container */}
+            {errorMessage && (
+              <div className="mt-6 bg-rose-950/20 border border-rose-800/30 rounded-xl p-3 text-rose-400 text-xs">
+                {errorMessage}
+              </div>
+            )}
+          </aside>
+        )}
 
         {/* MAP & TRACKING PANEL AREA */}
         <section className="flex-1 flex flex-col bg-[#05060b] p-6 overflow-hidden relative">
