@@ -298,13 +298,13 @@ export const App: React.FC = () => {
           setRecipientAddress(data.requirements.recipient);
         } else {
           // Fallback to Testnet contract address
-          setRecipientAddress('CSIXLHKTIVG2XOASFE2RE22JBMFOCYRSVTSIJWZ3R3WQS5KZ4SD7QS6EXA');
+          setRecipientAddress('RMWFP7NSWSQ72SMZYDVEHXUD3ABJY3UTT4DIWCRJXN2OZ4LKXY2USFDUP4');
         }
         setIsPaymentModalOpen(true);
       })
       .catch(err => {
         console.error('Error fetching requirements:', err);
-        setRecipientAddress('CSIXLHKTIVG2XOASFE2RE22JBMFOCYRSVTSIJWZ3R3WQS5KZ4SD7QS6EXA');
+        setRecipientAddress('RMWFP7NSWSQ72SMZYDVEHXUD3ABJY3UTT4DIWCRJXN2OZ4LKXY2USFDUP4');
         setIsPaymentModalOpen(true);
       });
   };
