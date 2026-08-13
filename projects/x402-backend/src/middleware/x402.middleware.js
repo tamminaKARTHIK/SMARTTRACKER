@@ -19,13 +19,6 @@ async function x402Middleware(req, res, next) {
   const walletAddress = req.header('Wallet-Address') || req.query.wallet;
   const paymentSignature = req.header('Payment-Signature') || req.query.signature;
 
-  if (!walletAddress) {
-    return res.status(402).json({
-      error: 'Wallet address required. Payment required to access live tracking data.',
-      requirements
-    });
-  }
-
   // Fetch duration and pricing to build requirements
   const durationMinutes = parseInt(req.query.duration || '30', 10);
   let priceAlgo = 0.15; // default 30 mins
@@ -50,6 +43,13 @@ async function x402Middleware(req, res, next) {
   };
 
   const requirementsBase64 = Buffer.from(JSON.stringify(requirements)).toString('base64');
+
+  if (!walletAddress) {
+    return res.status(402).json({
+      error: 'Wallet address required. Payment required to access live tracking data.',
+      requirements
+    });
+  }
 
   // Set x402 headers
   res.setHeader('Access-Control-Expose-Headers', 'Payment-Required');
