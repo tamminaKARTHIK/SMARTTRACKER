@@ -20,7 +20,10 @@ async function x402Middleware(req, res, next) {
   const paymentSignature = req.header('Payment-Signature') || req.query.signature;
 
   if (!walletAddress) {
-    return res.status(401).json({ error: 'Wallet address required. Please connect your wallet.' });
+    return res.status(402).json({
+      error: 'Wallet address required. Payment required to access live tracking data.',
+      requirements
+    });
   }
 
   // Fetch duration and pricing to build requirements
